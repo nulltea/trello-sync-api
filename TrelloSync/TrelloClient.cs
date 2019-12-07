@@ -24,8 +24,45 @@ namespace TrelloSync
 		}
 
 		/// <summary>
+		/// My Trello profile
 		/// </summary>
-		public Boards Boards => new Boards(_restClient, "me");
+		public Member Me => _restClient.Request<Member>(new MembersRequest("me"));
+
+		/// <summary>
+		/// </summary>
+		public Boards Boards => new Boards(_restClient, Me);
+
+		/// <summary>
+		/// Get Trello member by username or Id
+		/// </summary>
+		/// <param name="username"></param>
+		/// <returns></returns>
+		public Member GetMember(string username) => _restClient.Request<Member>(new MembersRequest(username));
+
+
+		/// <summary>
+		/// Get Trello team by username or Id
+		/// </summary>
+		/// <param name="orgName"></param>
+		/// <returns></returns>
+		public Organization GetOrganisation(string orgName) => _restClient.Request<Organization>(new OrganizationRequest(orgName));
+
+		/// <summary>
+		/// </summary>
+		/// <returns></returns>
+		public TrelloEntity Search()
+		{
+			return null;//TODO
+		}
+
+		/// <summary>
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		public TrelloCollection<T> SearchCollection<T>() where T: ITrelloEntity
+		{
+			return null;//TODO
+		}
 
 		/// <summary>
 		/// </summary>
@@ -42,6 +79,8 @@ namespace TrelloSync
 			_restClient.Authenticate(null);
 		}
 	}
+
+	#region Service REST Api client
 
 	/// <summary>
 	/// </summary>
@@ -135,8 +174,8 @@ namespace TrelloSync
 		{
 			if (request is PutBodyRequest putBodyRequest)
 			{
-				putBodyRequest.BodyObject.Add("key", _applicationKey);
-				putBodyRequest.BodyObject.Add("token", (Authenticator as MemberTokenAuthenticator)?.Token);
+				putBodyRequest.BodyObject.SetValue("key", _applicationKey);
+				putBodyRequest.BodyObject.SetValue("token", (Authenticator as MemberTokenAuthenticator)?.Token);
 				putBodyRequest.AddJsonBody(putBodyRequest.BodyObject);
 			}
 		}
@@ -169,4 +208,6 @@ namespace TrelloSync
 			request.AddParameter("token", Token);
 		}
 	}
+
+	#endregion
 }

@@ -6,7 +6,9 @@ using Newtonsoft.Json;
 
 namespace TrelloSync
 {
-		/// <summary>
+	#region Service
+
+	/// <summary>
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	public class TrelloCollection<T> :  List<T>, ITrelloEntity where T: ITrelloEntity
@@ -33,8 +35,14 @@ namespace TrelloSync
 			ForEach(item => item.SetRestClient(restClient));
 		}
 
+		/// <summary>
+		/// </summary>
 		public TrelloCollection() { } 
 	}
+
+	#endregion
+
+	#region Boards
 
 	/// <summary>
 	/// </summary>
@@ -43,9 +51,16 @@ namespace TrelloSync
 		/// <summary>
 		/// </summary>
 		/// <param name="restClient"></param>
-		/// <param name="memberUserName"></param>
-		public Boards(TrelloClient restClient, string memberUserName) 
-			: base(restClient, restClient.Request<List<Board>>(new BoardsForMemberRequest(memberUserName))) { }
+		/// <param name="member"></param>
+		public Boards(TrelloClient restClient, Member member) 
+			: base(restClient, restClient.Request<List<Board>>(new BoardsForMemberRequest(member))) { }
+
+		/// <summary>
+		/// </summary>
+		/// <param name="restClient"></param>
+		/// <param name="organization"></param>
+		public Boards(TrelloClient restClient, Organization organization) 
+			: base(restClient, restClient.Request<List<Board>>(new ByOrganizationBoards(organization))) { }
 
 		/// <summary>
 		/// </summary>
@@ -53,6 +68,10 @@ namespace TrelloSync
 		/// <returns></returns>
 		public Board this[string name] => this.FirstOrDefault(board => board.Name == name);
 	}
+
+	#endregion
+
+	#region Lists
 
 	/// <summary>
 	/// </summary>
@@ -71,6 +90,10 @@ namespace TrelloSync
 		/// <returns></returns>
 		public List this[string name] => this.FirstOrDefault(board => board.Name == name);
 	}
+	
+	#endregion
+
+	#region Cards
 
 	/// <summary>
 	/// </summary>
@@ -105,7 +128,7 @@ namespace TrelloSync
 		public Card this[string pld] => this.FirstOrDefault(card => Convert.ToString(card.InnerSystemTaskId) == pld);
 	}
 
-	#region Additional collections
+	#region Additional item collections
 	
 	/// <summary>
 	/// </summary>
@@ -247,6 +270,62 @@ namespace TrelloSync
 		/// </summary>
 		/// <param name="name"></param>
 		public CheckItem this[string name] => this.FirstOrDefault(card => card.Name == name);
+	}
+
+	#endregion
+
+	#endregion
+
+	#region Organizations & Members
+
+	/// <summary>
+	/// </summary>
+	public class Organizations : TrelloCollection<Organization>
+	{
+		/// <summary>
+		/// </summary>
+		/// <param name="restClient"></param>
+		/// <param name="member"></param>
+		public Organizations(TrelloClient restClient, Member member) 
+			: base(restClient, restClient.Request<List<Organization>>(new ByMemberOrganizationsRequest(member))) { }
+
+		/// <summary>
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		public Organization this[string name] => this.FirstOrDefault(org => org.Name == name);
+	}
+
+	/// <summary>
+	/// </summary>
+	public class Members : TrelloCollection<Member>
+	{
+		/// <summary>
+		/// </summary>
+		/// <param name="restClient"></param>
+		/// <param name="board"></param>
+		public Members(TrelloClient restClient, Board board) 
+			: base(restClient, restClient.Request<List<Member>>(new ByBoardMembersRequest(board))) { }
+
+		/// <summary>
+		/// </summary>
+		/// <param name="restClient"></param>
+		/// <param name="organization"></param>
+		public Members(TrelloClient restClient, Organization organization) 
+			: base(restClient, restClient.Request<List<Member>>(new ByOrganizationMembers(organization))) { }
+
+		/// <summary>
+		/// </summary>
+		/// <param name="restClient"></param>
+		/// <param name="card"></param>
+		public Members(TrelloClient restClient, Card card) 
+			: base(restClient, restClient.Request<List<Member>>(new ByCardMembersRequest(card))) { }
+
+		/// <summary>
+		/// </summary>
+		/// <param name="username"></param>
+		/// <returns></returns>
+		public Member this[string username] => this.FirstOrDefault(org => org.Username == username);
 	}
 
 	#endregion

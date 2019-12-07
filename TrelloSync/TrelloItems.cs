@@ -6,6 +6,8 @@ using Newtonsoft.Json;
 
 namespace TrelloSync
 {
+	#region Service
+
 	/// <summary>
 	/// </summary>
 	public interface ITrelloEntity
@@ -32,6 +34,10 @@ namespace TrelloSync
 			RestClient = client;
 		}
 	}
+
+	#endregion
+
+	#region Board
 
 	/// <summary>
 	/// Trello Board
@@ -86,6 +92,10 @@ namespace TrelloSync
 		/// </summary>
 		public List<CustomField> CustomFields => RestClient.Request<List<CustomField>>(new CustomFieldsForBoardRequest(this));
 
+		/// <summary>
+		/// </summary>
+		public Members Members => new Members(RestClient, this);
+
 		private readonly Dictionary<string, Color> _trelloColorMapping = new Dictionary<string, Color>
 		{
 			{"green", Color.Green},
@@ -100,6 +110,10 @@ namespace TrelloSync
 			{"black", Color.Black}
 		};
 	}
+
+	#endregion
+
+	#region List
 
 	/// <summary>
 	/// Trello list
@@ -128,6 +142,10 @@ namespace TrelloSync
 		/// </summary>
 		public Cards Cards => new Cards(RestClient, this);
 	}
+
+	#endregion
+
+	#region Card
 
 	/// <summary>
 	/// Trello card
@@ -234,6 +252,11 @@ namespace TrelloSync
 
 		/// <summary>
 		/// </summary>
+		[JsonIgnore]
+		public Members Members => new Members(RestClient, this);
+
+		/// <summary>
+		/// </summary>
 		[JsonProperty]
 		public string Url { get; private set; }
 
@@ -246,51 +269,11 @@ namespace TrelloSync
 		/// </summary>
 		[JsonProperty]
 		public DateTime DateLastActivity { get; private set; }
-
-		/// <summary>
-		/// </summary>
-		[JsonProperty("IdMembers")]
-		public List<string> Members { get; private set; }
 	}
-
-	/// <summary>
-	/// </summary>
-	public class Member : TrelloEntity
-	{
-		/// <summary>
-		/// </summary>
-		public string Id { get; set; }
-		
-		/// <summary>
-		/// </summary>
-		public string FullName { get; set; }
-		
-		/// <summary>
-		/// </summary>
-		public string Username { get; set; }
-
-		/// <summary>
-		/// </summary>
-		public string Bio { get; set; }
-
-		/// <summary>
-		/// </summary>
-		[JsonProperty]
-		public string Url { get; private set; }
-		
-		/// <summary>
-		/// </summary>
-		[JsonProperty]
-		public string AvatarHash { get; private set; }
-		
-		/// <summary>
-		/// </summary>
-		public string Initials { get; set; }
-	}
-
-	#region Additional Trello items
 
 	
+	#region Additional card items
+
 	/// <summary>
 	/// </summary>
 	public class CustomField
@@ -436,6 +419,102 @@ namespace TrelloSync
 		/// <summary>
 		/// </summary>
 		public bool Checked { get; set; }
+	}
+
+	#endregion
+
+	#endregion
+
+	#region Organization & Member
+	
+	/// <summary>
+	/// </summary>
+	public class Organization : TrelloEntity
+	{
+		/// <summary>
+		/// </summary>
+		[JsonProperty]
+		public string Id { get; private set; }
+		
+		/// <summary>
+		/// </summary>
+		[JsonProperty]
+		public string DisplayName { get; private set; }
+		
+		/// <summary>
+		/// </summary>
+		public string Name { get; set; }
+		
+		/// <summary>
+		/// </summary>
+		public string Desc { get; set; }
+		
+		/// <summary>
+		/// </summary>
+		[JsonProperty]
+		public string Url { get; private set; }
+		
+		/// <summary>
+		/// </summary>
+		[JsonProperty]
+		public string Website { get; private set; }
+
+		/// <summary>
+		/// </summary>
+		[JsonProperty]
+		public string LogoHash { get; private set; }
+
+		/// <summary>
+		/// </summary>
+		public Members Members => new Members(RestClient, this);
+
+		/// <summary>
+		/// </summary>
+		public Boards Boards => new Boards(RestClient, this);
+	}
+
+	/// <summary>
+	/// </summary>
+	public class Member : TrelloEntity
+	{
+		/// <summary>
+		/// </summary>
+		[JsonProperty]
+		public string Id { get; private set; }
+		
+		/// <summary>
+		/// </summary>
+		public string FullName { get; set; }
+		
+		/// <summary>
+		/// </summary>
+		public string Username { get; set; }
+
+		/// <summary>
+		/// </summary>
+		public string Bio { get; set; }
+
+		/// <summary>
+		/// </summary>
+		[JsonProperty]
+		public string Url { get; private set; }
+		
+		/// <summary>
+		/// </summary>
+		[JsonProperty]
+		public string AvatarHash { get; private set; }
+		
+		/// <summary>
+		/// </summary>
+		public string Initials { get; set; }
+
+		/// <summary>
+		/// </summary>
+		public Organizations Organizations => new Organizations(RestClient, this);
+
+		/// <summary>
+		/// </summary>
+		public Boards Boards => new Boards(RestClient, this);
 	}
 
 	#endregion

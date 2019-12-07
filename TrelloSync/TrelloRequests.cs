@@ -5,23 +5,11 @@ using RestSharp;
 
 namespace TrelloSync
 {
-	#region Memeber Requests
-
-	internal class MembersRequest : RestRequest
-	{
-		public MembersRequest(string memberIdOrUsername, string resource = "") : base("members/{memberIdOrUsername}/" + resource)
-		{
-			AddParameter("memberIdOrUsername", memberIdOrUsername, ParameterType.UrlSegment);
-		}
-	}
-
-	#endregion
-
 	#region Board Requests
 
 	internal class BoardsForMemberRequest : MembersRequest
 	{
-		public BoardsForMemberRequest(string memberIdOrUsername) : base(memberIdOrUsername, "boards") { }
+		public BoardsForMemberRequest(Member member) : base(member.Username, "boards") { }
 	}
 
 	internal class BoardsRequest : RestRequest
@@ -40,6 +28,11 @@ namespace TrelloSync
 	internal class LabelsForBoardRequest : BoardsRequest
 	{
 		public LabelsForBoardRequest(Board board) : base(board.BoardId, "labels") { }
+	}
+
+	internal class ByBoardMembersRequest : BoardsRequest
+	{
+		public ByBoardMembersRequest(Board member) : base(member.BoardId, "members") { }
 	}
 
 	#endregion
@@ -97,6 +90,11 @@ namespace TrelloSync
 			AddParameter("checklists", "all");
 			AddParameter("customFieldItems", "true");
 		}
+	}
+
+	internal class ByCardMembersRequest : CardsRequest
+	{
+		public ByCardMembersRequest(Card card) : base(card.CardId, "members") { }
 	}
 
 	/// <summary>
@@ -205,6 +203,40 @@ namespace TrelloSync
 			AddParameter("name", checkItem.Name);
 			AddParameter("checked", checkItem.Checked);
 		}
+	}
+
+	#endregion
+
+	#region Organization & Member Requests
+
+	internal class MembersRequest : RestRequest
+	{
+		public MembersRequest(string memberIdOrUsername, string resource = "") : base("members/{memberIdOrUsername}/" + resource)
+		{
+			AddParameter("memberIdOrUsername", memberIdOrUsername, ParameterType.UrlSegment);
+		}
+	}
+
+	internal class ByMemberOrganizationsRequest : MembersRequest
+	{
+		public ByMemberOrganizationsRequest(Member member) : base(member.Username, "organizations") { }
+	}
+
+	internal class OrganizationRequest : RestRequest
+	{
+		public OrganizationRequest(string orgNameOrId, string resource = "") : base("organization/{orgId}/" + resource)
+		{
+			AddParameter("orgId", orgNameOrId, ParameterType.UrlSegment);
+		}
+	}
+
+	internal class ByOrganizationMembers : OrganizationRequest
+	{
+		public ByOrganizationMembers(Organization organization) : base(organization.Name, "members") { }
+	}
+	internal class ByOrganizationBoards : OrganizationRequest
+	{
+		public ByOrganizationBoards(Organization organization) : base(organization.Name, "boards") { }
 	}
 
 	#endregion
