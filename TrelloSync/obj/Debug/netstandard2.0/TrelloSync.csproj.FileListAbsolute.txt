@@ -1,6 +1,0 @@
-C:\Users\yalugin\source\repos\trello-sync-api\TrelloSync\bin\Debug\netstandard2.0\TrelloSync.deps.json
-C:\Users\yalugin\source\repos\trello-sync-api\TrelloSync\bin\Debug\netstandard2.0\TrelloSync.dll
-C:\Users\yalugin\source\repos\trello-sync-api\TrelloSync\obj\Debug\netstandard2.0\TrelloSync.csprojAssemblyReference.cache
-C:\Users\yalugin\source\repos\trello-sync-api\TrelloSync\obj\Debug\netstandard2.0\TrelloSync.csproj.CoreCompileInputs.cache
-C:\Users\yalugin\source\repos\trello-sync-api\TrelloSync\obj\Debug\netstandard2.0\TrelloSync.AssemblyInfoInputs.cache
-C:\Users\yalugin\source\repos\trello-sync-api\TrelloSync\obj\Debug\netstandard2.0\TrelloSync.AssemblyInfo.cs
